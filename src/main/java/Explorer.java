@@ -28,7 +28,7 @@ public class Explorer {
 			Node actualNode = stackNode.pop();
 			if (!searchedNode.contains(actualNode))
 				searchedNode.add(actualNode);
-			if (Arrays.deepEquals(actualNode.getArray(), ResultArray)) {
+			if (actualNode.equals(resultNode)) {
 				//saveFile("plik.txt", actualNode.getArray());  //Sprawdzenie czy aktualny węzeł nie jest rozwiązaniem
 				rozwiazanie = true;
 				System.out.println("znalazlem rozwiazanie po przeszukaniu " + searchedNode.size() + "wezlow");

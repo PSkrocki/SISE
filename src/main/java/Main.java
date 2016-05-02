@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
         String sourcePath = "input.txt";
         String exploringMethod = "dfs";
-        char[] exploringOrder = {'D','G','L','P'};
+        char[] exploringOrder = {'L','P','G','D'};
         Explorer explorer = new Explorer();
 
         switch (exploringMethod) {
