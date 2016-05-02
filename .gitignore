@@ -1,17 +1,13 @@
-/target/
+/target
 /.settings/
-/bin/
+/bin
 /.classpath
-<<<<<<< HEAD
-<<<<<<< HEAD
 /.project
-=======
 /.project
 /15.iml
 /dependency-reduced-pom
->>>>>>> c4bd5e415855638594f0c29525a731608b254ed4
-=======
 /.project
 /15.iml
 /dependency-reduced-pom
->>>>>>> fc3977e2dd39ab97645846c5bcfbf3c42a1b1800
+/.idea
+/pl.lodz.p.iml

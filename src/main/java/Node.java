@@ -21,7 +21,7 @@ public @Data class Node {
         this.arraysLengthX = array[0].length;
         getEmptyElement();
         printArray();
-        System.out.println("wykreowa³em z pierwszego konstruktora");
+        System.out.println("wykreowaï¿½em z pierwszego konstruktora");
         
     }
 
