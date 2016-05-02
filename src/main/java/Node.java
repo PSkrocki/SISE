@@ -3,9 +3,7 @@ import java.util.Arrays;
 
 import lombok.Data;
 
-/**
- * Created by kamil on 5/1/16.
- */
+
 
 public @Data class Node {
 
@@ -14,6 +12,7 @@ public @Data class Node {
     private int arraysLengthX;
     private int emptyElementsX;
     private int emptyElementsY;
+    private int order;
     private char direction;
 
     public Node(int[][] array) {
@@ -199,4 +198,12 @@ public @Data class Node {
     public void setDirection(char direction) {
         this.direction = direction;
     }
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
 }
