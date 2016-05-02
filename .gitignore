@@ -1,3 +1,7 @@
 /target/
 /.settings/
 /bin/
+/.classpath
+/.project
+/15.iml
+/dependency-reduced-pom
