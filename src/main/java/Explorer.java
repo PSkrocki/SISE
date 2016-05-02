@@ -149,4 +149,60 @@ public class Explorer {
 			System.out.println("nie znalazlem rozwiazania");
 		}
 	}
+	
+	
+	public void DFSWithHeuristic(Node firstNode, IHeuristic heuristic) throws InterruptedException {
+		int depth = 0;
+		List<Node> childrenList = new ArrayList<Node>();
+		List<Node> searchedNode = new ArrayList<Node>();
+		Stack<Node> stackNode = new Stack<>();
+		stackNode.add(firstNode);
+		Node resultNode = new Node(resultArray);
+		boolean rozwiazanie = false;
+		do {
+			Node actualNode = stackNode.pop();
+			if (!searchedNode.contains(actualNode))
+				searchedNode.add(actualNode);
+			if (actualNode.equals(resultNode)) {
+				//saveFile("plik.txt", actualNode.getArray());  //Sprawdzenie czy aktualny wezel‚ nie jest rozwiazaniem
+				rozwiazanie = true;
+				System.out.println("znalazlem rozwiazanie po przeszukaniu " + searchedNode.size() + "wezlow");
+				break;
+			} else {
+
+				childrenList = actualNode.generateChildren();
+				List<Integer> nodeOrder= new ArrayList<Integer>();
+				int i=0;				
+				for (Node childNode : childrenList){
+					childNode.setOrder(heuristic.calculateOrders((childNode.getArray())));
+					nodeOrder.add(heuristic.calculateOrders(childNode.getArray()));
+					System.out.println("przydzielono mi kolejnosc:"+nodeOrder.get(i));
+					i+=i;
+				}
+				
+				Collections.sort(nodeOrder);
+				System.out.println("kolejnosc po sortowaniu");
+			    for (int x: nodeOrder)
+				System.out.println(x);
+				
+				for (int j = 0; j < nodeOrder.size(); j++){
+					for (Node childNode : childrenList) {
+						if (childNode.getOrder() == nodeOrder.get(j)) {
+							System.out.println("stworzylem wezel ale nie wiem czy nalezy"+childNode.getOrder());
+							childNode.printArray();
+							if (!searchedNode.contains(childNode)){
+								System.out.println("Sprawdzilem-- Nie nalezy"+ childNode.getOrder());
+								//searchedNode.add(childNode);
+								stackNode.push(childNode);}
+						}
+					}
+				}
+			}
+			//Thread.sleep(100);
+		}
+		while (!stackNode.isEmpty());
+		if (rozwiazanie == false) {
+			System.out.println("nie znalazlem rozwiazania");
+		}
+	}
 }
