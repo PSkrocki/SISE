@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -40,7 +41,7 @@ public class Explorer {
 							childNode.printArray();
 							if (!searchedNode.contains(childNode)){
 								System.out.println("Sprawdzilem-- Nie nalezy"+ childNode.getDirection());
-								searchedNode.add(childNode);
+								//searchedNode.add(childNode);
 								stackNode.push(childNode);}
 
 						}
@@ -81,7 +82,7 @@ public class Explorer {
 							childNode.printArray();
 							if (!searchedNode.contains(childNode)){
 								System.out.println("Sprawdzilem-- Nie nalezy"+ childNode.getDirection());
-								searchedNode.add(childNode);
+								//searchedNode.add(childNode);
 								queueNode.add(childNode);}
 						}
 					}
@@ -114,23 +115,28 @@ public class Explorer {
 			} else {
 
 				childrenList = actualNode.generateChildren();
-				int[] nodeOrder= new int[childrenList.size()];
+				List<Integer> nodeOrder= new ArrayList<Integer>();
 				int i=0;				
 				for (Node childNode : childrenList){
 					childNode.setOrder(heuristic.calculateOrders((childNode.getArray())));
-					nodeOrder[i]=heuristic.calculateOrders(childNode.getArray());
-					System.out.println("przydzielono mi kolejnosc:"+nodeOrder[i]);
+					nodeOrder.add(heuristic.calculateOrders(childNode.getArray()));
+					System.out.println("przydzielono mi kolejnosc:"+nodeOrder.get(i));
 					i+=i;
 				}
-				Arrays.sort(nodeOrder);
-				for (int j = 0; j < nodeOrder.length; j++){
+				
+				Collections.sort(nodeOrder);
+				System.out.println("kolejnosc po sortowaniu");
+			    for (int x: nodeOrder)
+				System.out.println(x);
+				
+				for (int j = 0; j < nodeOrder.size(); j++){
 					for (Node childNode : childrenList) {
-						if (childNode.getOrder() == nodeOrder[j]) {
+						if (childNode.getOrder() == nodeOrder.get(j)) {
 							System.out.println("stworzylem wezel ale nie wiem czy nalezy"+childNode.getOrder());
 							childNode.printArray();
 							if (!searchedNode.contains(childNode)){
 								System.out.println("Sprawdzilem-- Nie nalezy"+ childNode.getOrder());
-								searchedNode.add(childNode);
+								//searchedNode.add(childNode);
 								queueNode.add(childNode);}
 						}
 					}
