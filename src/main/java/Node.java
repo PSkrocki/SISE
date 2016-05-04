@@ -20,8 +20,8 @@ public @Data class Node {
         this.arraysLengthY = array.length;
         this.arraysLengthX = array[0].length;
         getEmptyElement();
-        printArray();
-        System.out.println("wykreowa³em z pierwszego konstruktora");
+        //printArray();
+        //System.out.println("wykreowa³em z pierwszego konstruktora");
         
     }
 
