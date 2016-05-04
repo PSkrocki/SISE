@@ -11,7 +11,8 @@ public class Explorer {
     int depth = 0;
 	List<Node> childrenList; 
 	List<Node> searchedNode; 
-    boolean rozwiazanie;
+    boolean result;
+    Node resultNodeGlobal;
     
     public static int[][] resultArray = new int[][]{
             {1, 2, 3, 4},
@@ -76,10 +77,12 @@ public class Explorer {
 	public void DFS (Node actualNode, char[] nodeOrder) throws InterruptedException{
 	 	 childrenList= new ArrayList<Node>();
 		 searchedNode = new ArrayList<Node>();
-		 rozwiazanie = false;
+		 result = false;
 		 DFSRun(actualNode,nodeOrder);
-		 if(rozwiazanie)
+		 if(result)
 			 System.out.println("znalazlem rozwiazanie po oprzeszukaniu " + searchedNode.size() + "wezlow");
+		 resultNodeGlobal.printArray();
+		 
     }
     
     public void DFSRun (Node actualNode, char[] nodeOrder) throws InterruptedException {
@@ -94,7 +97,12 @@ public class Explorer {
             if (!searchedNode.contains(actualNode))
                 searchedNode.add(actualNode);
             if (actualNode.equals(resultNode)) {
-                rozwiazanie = true;
+                result = true;
+                resultNodeGlobal=actualNode;
+                System.out.println("pokaz mi wynik: ");
+                actualNode.printArray();
+                System.out.println("^ to jest wynik");
+                Thread.sleep(10000);
                 return;
             } else {
                 childrenList = actualNode.generateChildren();

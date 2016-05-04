@@ -5,7 +5,7 @@ public class Main {
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 		String sourcePath = "input.txt";
 		String exploringMethod = "dfs";
-		char[] exploringOrder = {'L','P','G','D'};
+		char[] exploringOrder = {'R'};
 		Explorer explorer = new Explorer();
 
 		switch (exploringMethod) {
