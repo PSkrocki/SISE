@@ -1,11 +1,9 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import lombok.Data;
 
 
-
-public @Data class Node {
+public class Node {
 
     private int[][] array;
     private int arraysLengthY;
@@ -14,22 +12,30 @@ public @Data class Node {
     private int emptyElementsY;
     private int order;
     private char direction;
+    private boolean hasParent;
+    private int parentsHashCode;
+    private int hashCode;
 
     public Node(int[][] array) {
         this.array = array;
         this.arraysLengthY = array.length;
         this.arraysLengthX = array[0].length;
+        this.hasParent = false;
+        this.hashCode = hashCode();
         getEmptyElement();
         printArray();
-        System.out.println("wykreowa�em z pierwszego konstruktora");
+        System.out.println("wykreowalem z pierwszego konstruktora");
         
     }
 
-    public Node(int[][] array, char direction) {
+    public Node(int[][] array, char direction, int parentsHashCode) {
         this.array = array;
         this.arraysLengthY = array.length;
         this.arraysLengthX = array[0].length;
         this.direction = direction;
+        this.hasParent = true;
+        this.hashCode = hashCode();
+        this.parentsHashCode = parentsHashCode;
         getEmptyElement();
         printArray();
         System.out.println();
@@ -61,44 +67,44 @@ public @Data class Node {
     public ArrayList<Node> generateChildren() {
         ArrayList<Node> nodesChildren = new ArrayList<Node>();
         if (canMoveUp()) {
-            nodesChildren.add(new Node(moveElement('G'), 'G'));
+            nodesChildren.add(new Node(moveElement('G'), 'G', hashCode));
         }
         if (canMoveDown()) {
-            nodesChildren.add(new Node(moveElement('D'), 'D'));
+            nodesChildren.add(new Node(moveElement('D'), 'D', hashCode));
         }
         if (canMoveLeft()) {
-            nodesChildren.add(new Node(moveElement('L'), 'L'));
+            nodesChildren.add(new Node(moveElement('L'), 'L', hashCode));
         }
         if (canMoveRight()) {
-            nodesChildren.add(new Node(moveElement('P'), 'P'));
+            nodesChildren.add(new Node(moveElement('P'), 'P', hashCode));
         }
         return nodesChildren;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(array);
+        return result;
+    }
+
     public boolean canMoveUp() {
-        if (emptyElementsY == 0)
-            return false;
-        return true;
+        return emptyElementsY != 0;
     }
 
     public boolean canMoveDown() {
-        if (emptyElementsY == arraysLengthY - 1)
-            return false;
-        return true;
+        return emptyElementsY != arraysLengthY - 1;
 
     }
 
     public boolean canMoveLeft() {
-        if (emptyElementsX == 0)
-            return false;
-        return true;
+        return emptyElementsX != 0;
 
     }
 
     public boolean canMoveRight() {
-        if (emptyElementsX == arraysLengthX - 1)
-            return false;
-        return true;
+        return emptyElementsX != arraysLengthX - 1;
 
     }
 
@@ -144,11 +150,9 @@ public @Data class Node {
 			return false;
 		
 		Node other = (Node) obj;
-		if (!Arrays.deepEquals(array, other.array))
-			return false;
-		
-		return true;
-	}
+        return Arrays.deepEquals(array, other.array);
+
+    }
 
 
     public int[][] getArray() {
@@ -206,4 +210,28 @@ public @Data class Node {
 	public void setOrder(int order) {
 		this.order = order;
 	}
+
+    public boolean isHasParent() {
+        return hasParent;
+    }
+
+    public void setHasParent(boolean hasParent) {
+        this.hasParent = hasParent;
+    }
+
+    public int getParentsHashCode() {
+        return parentsHashCode;
+    }
+
+    public void setParentsHashCode(int parentsHashCode) {
+        this.parentsHashCode = parentsHashCode;
+    }
+
+    public int getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(int hashCode) {
+        this.hashCode = hashCode;
+    }
 }
