@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -8,21 +9,22 @@ import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Explorer {
-    int depth = 0;
-    List<Node> childrenList;
-    List<Node> searchedNode;
-    boolean result;
-    Node resultNodeGlobal;
-    private String resultPath;
 
+    private int depth = 0;
+    private List<Node> childrenList;
+    private List<Node> searchedNode;
+    private boolean result;
+    private Node resultNodeGlobal;
+    private String resultPath;
     public static int[][] resultArray = new int[][]{
             {1, 2, 3, 4},
             {5, 6, 7, 8},
             {9, 10, 11, 12},
             {13, 14, 15, 0},
     };
-
     public static char[] nodesDirections = new char[]{'G', 'D', 'L', 'P'};
+
+
 
     public void DFS(Node actualNode, char[] nodeOrder) throws InterruptedException {
         childrenList = new ArrayList<Node>();
@@ -76,9 +78,9 @@ public class Explorer {
     }
 
     public void IDFS(Node firstNode, char[] nodeOrder) throws InterruptedException {
-        int depth = 0;
-        List<Node> childrenList = new ArrayList<Node>();
-        List<Node> searchedNode = new ArrayList<Node>();
+        depth = 0;
+        childrenList = new ArrayList<Node>();
+        searchedNode = new ArrayList<Node>();
         Stack<Node> stackNode = new Stack<Node>();
         stackNode.push(firstNode);
         Node resultNode = new Node(resultArray);
@@ -122,9 +124,9 @@ public class Explorer {
     }
 
     public void BFS(Node firstNode, char[] nodeOrder) throws InterruptedException {
-        int depth = 0;
-        List<Node> childrenList = new ArrayList<Node>();
-        List<Node> searchedNode = new ArrayList<Node>();
+        depth = 0;
+        childrenList = new ArrayList<Node>();
+        searchedNode = new ArrayList<Node>();
         Queue<Node> queueNode = new LinkedList<>();
         queueNode.add(firstNode);
         Node resultNode = new Node(resultArray);
@@ -169,9 +171,9 @@ public class Explorer {
     }
 
     public void BFSWithHeuristic(Node firstNode, IHeuristic heuristic) throws InterruptedException {
-        int depth = 0;
-        List<Node> childrenList = new ArrayList<Node>();
-        List<Node> searchedNode = new ArrayList<Node>();
+        depth = 0;
+        childrenList = new ArrayList<Node>();
+        searchedNode = new ArrayList<Node>();
         Queue<Node> queueNode = new LinkedList<>();
         queueNode.add(firstNode);
         Node resultNode = new Node(resultArray);
@@ -241,10 +243,9 @@ public class Explorer {
         String newResultPath = null;
 
         for (int i = resultPath.length() - 1; i >= 0; i--) {
-            if (resultPath.charAt(i) == 'l'){
+            if (resultPath.charAt(i) == 'l') {
                 break;
-            }
-            else if(newResultPath == null){
+            } else if (newResultPath == null) {
                 newResultPath = Character.toString(resultPath.charAt(i));
             } else
                 newResultPath += resultPath.charAt(i);
@@ -252,7 +253,7 @@ public class Explorer {
         return newResultPath;
     }
 
-    public void getPath(Node actualNode){
+    public void getPath(Node actualNode) {
         while (actualNode.isHasParent()) {
             resultPath += actualNode.getDirection();
             for (Node node : searchedNode) {
@@ -261,6 +262,12 @@ public class Explorer {
                     break;
                 }
             }
+            System.out.println(resultPath);
+        }
+        try {
+            Serializer.saveFile(convertResultPath(resultPath));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
         System.out.println("Droga jaka pokonalem aby zwyciezyc: " + convertResultPath(resultPath));
     }

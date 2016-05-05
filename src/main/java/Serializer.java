@@ -24,7 +24,7 @@ public class Serializer {
 
         Xsize = Integer.parseInt(values[0]);
         System.out.println(Xsize);
-        
+
         Ysize = Integer.parseInt(values[1]);
         System.out.println(Ysize);
 
@@ -38,7 +38,7 @@ public class Serializer {
             values = valuesLine.split(" ");
             for (int j = 0; j < Xsize; j++)
                 startingArray[i][j] = Integer.parseInt(values[j]);
-            if(i == Ysize){
+            if (i == Ysize) {
                 break;
             }
             i++;
@@ -47,20 +47,10 @@ public class Serializer {
         return startingArray;
     }
 
-    public static void saveFile(String path, int[][] endingArray) throws FileNotFoundException {
-        PrintWriter output = new PrintWriter(new File(path));
-
-        int n = endingArray.length;
-        int m = endingArray[0].length;
-
-        output.write(n + " " + m + "\n");
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                output.write(endingArray[i][j] + " ");
-            }
-            output.write("\n");
+    public static void saveFile(String pathToResult) throws FileNotFoundException {
+        String outputPath = "output.txt";
+        try (PrintWriter out = new PrintWriter(outputPath)) {
+            out.println(pathToResult);
         }
-        output.close();
     }
 }
