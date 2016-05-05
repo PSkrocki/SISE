@@ -3,11 +3,7 @@
 /bin
 /.classpath
 /.project
-/.project
 /15.iml
-/dependency-reduced-pom
-/.project
-/15.iml
-/dependency-reduced-pom
-/.idea
-/pl.lodz.p.iml
+/dependency-reduced-pom.xml
+.idea
+pl.lodz.p.iml
