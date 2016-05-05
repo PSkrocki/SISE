@@ -51,6 +51,7 @@ public class Explorer {
             System.out.println("pokaz mi wynik: ");
             actualNode.printArray();
             System.out.println("^ to jest wynik");
+            getPath(actualNode);
             Thread.sleep(10000);
             return;
         } else {
@@ -93,6 +94,7 @@ public class Explorer {
             if (actualNode.equals(resultNode)) {
                 rozwiazanie = true;
                 System.out.println("znalazlem rozwiazanie po oprzeszukaniu " + searchedNode.size() + "wezlow");
+                getPath(actualNode);
                 break;
             } else {
                 childrenList = actualNode.generateChildren();
@@ -139,17 +141,7 @@ public class Explorer {
             if (actualNode.equals(resultNode)) {
                 hasResults = true;
                 System.out.println("znalazlem hasResults po przeszukaniu " + searchedNode.size() + "wezlow");
-                while (actualNode.isHasParent()) {
-                    resultPath += actualNode.getDirection();
-                    for (Node node : searchedNode) {
-                        if (actualNode.getParentsHashCode() == node.getHashCode()) {
-                            actualNode = node;
-                            break;
-                        }
-                    }
-                }
-                System.out.println(resultPath);
-                System.out.println("Droga jaka pokonalem aby zwyciezyc: " + convertResultPath(resultPath));
+                getPath(actualNode);
                 break;
             } else {
                 childrenList = actualNode.generateChildren();
@@ -192,6 +184,7 @@ public class Explorer {
             if (actualNode.equals(resultNode)) {
                 hasResult = true;
                 System.out.println("znalazlem hasResult po przeszukaniu " + searchedNode.size() + "wezlow");
+                getPath(actualNode);
                 break;
             } else {
 
@@ -258,4 +251,18 @@ public class Explorer {
         }
         return newResultPath;
     }
+
+    public void getPath(Node actualNode){
+        while (actualNode.isHasParent()) {
+            resultPath += actualNode.getDirection();
+            for (Node node : searchedNode) {
+                if (actualNode.getParentsHashCode() == node.getHashCode()) {
+                    actualNode = node;
+                    break;
+                }
+            }
+        }
+        System.out.println("Droga jaka pokonalem aby zwyciezyc: " + convertResultPath(resultPath));
+    }
+
 }
