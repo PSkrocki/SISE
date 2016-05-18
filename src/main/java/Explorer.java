@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -10,11 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Explorer {
 
-    private int depth = 0;
-    private List<Node> childrenList;
     private List<Node> searchedNode;
     private boolean result;
-    private Node resultNodeGlobal;
     private String resultPath;
     public static int[][] resultArray = new int[][]{
             {1, 2, 3, 4},
@@ -25,61 +23,50 @@ public class Explorer {
     public static char[] nodesDirections = new char[]{'G', 'D', 'L', 'P'};
 
 
-
     public void DFS(Node actualNode, char[] nodeOrder) throws InterruptedException {
-        childrenList = new ArrayList<Node>();
-        searchedNode = new ArrayList<Node>();
-        result = false;
-        DFSRun(actualNode, nodeOrder);
+        int recursiveDepth = 0;
+        searchedNode = new ArrayList<>();
+        DFSRun(actualNode, nodeOrder, recursiveDepth);
         if (result)
-            System.out.println("znalazlem rozwiazanie po oprzeszukaniu " + searchedNode.size() + "wezlow");
-        if (resultNodeGlobal != null)
-            resultNodeGlobal.printArray();
+            System.out.println("Znaleziono po: " + searchedNode.size() + " wezlach/wezlow");
     }
 
-    public void DFSRun(Node actualNode, char[] nodeOrder) throws InterruptedException {
-
-        actualNode.printArray();
-        Node resultNode = new Node(resultArray);
+    public void DFSRun(Node actualNode, char[] nodeOrder, int recursiveDepth) throws InterruptedException {
+        List<Node> childrenList;
         boolean randomShuffling = false;
+        char[] nodeOrderNew = nodeOrder;
         if (nodeOrder[0] == 'R') {
             randomShuffling = true;
         }
         if (!searchedNode.contains(actualNode))
             searchedNode.add(actualNode);
-        if (actualNode.equals(resultNode)) {
+        if (Arrays.deepEquals(actualNode.getArray(), resultArray)) {
             result = true;
-            resultNodeGlobal = actualNode;
-            System.out.println("pokaz mi wynik: ");
-            actualNode.printArray();
-            System.out.println("^ to jest wynik");
             getPath(actualNode);
-            Thread.sleep(10000);
-            return;
-        } else {
+        } else if (!result) {
+            recursiveDepth++;
             childrenList = actualNode.generateChildren();
-            depth++;
-            System.out.println(depth);
             if (randomShuffling) {
-                nodeOrder = shuffleNodeOrder();
+                nodeOrderNew = shuffleNodeOrder();
             }
-            for (int i = nodeOrder.length - 1; i >= 0; i--) {
-                for (Node childNode : childrenList) {
-                    if (childNode.getDirection() == nodeOrder[i]) {
-                        if (!searchedNode.contains(childNode)) {
-                            if (depth < 3000)
-                                DFSRun(childNode, nodeOrder);
-                            Thread.sleep(100);
+            for (int i = nodeOrderNew.length - 1; i >= 0; i--) {
+                if (!childrenList.isEmpty())
+                    for (Node childNode : childrenList) {
+                        if (childNode.getDirection() == nodeOrderNew[i]) {
+                            if (!searchedNode.contains(childNode)) {
+                                if (recursiveDepth < 15)
+                                    DFSRun(childNode, nodeOrder, recursiveDepth);
+                            }
                         }
                     }
-                }
             }
+
         }
     }
 
     public void IDFS(Node firstNode, char[] nodeOrder) throws InterruptedException {
-        depth = 0;
-        childrenList = new ArrayList<Node>();
+        int depth = 0;
+        List<Node> childrenList;
         searchedNode = new ArrayList<Node>();
         Stack<Node> stackNode = new Stack<Node>();
         stackNode.push(firstNode);
@@ -95,7 +82,7 @@ public class Explorer {
                 searchedNode.add(actualNode);
             if (actualNode.equals(resultNode)) {
                 rozwiazanie = true;
-                System.out.println("znalazlem rozwiazanie po oprzeszukaniu " + searchedNode.size() + "wezlow");
+                System.out.println("Znaleziono po: " + searchedNode.size() + " wezlach/wezlow");
                 getPath(actualNode);
                 break;
             } else {
@@ -115,7 +102,7 @@ public class Explorer {
                     }
                 }
             }
-            Thread.sleep(100);
+            //Thread.sleep(100);
         }
         while (!stackNode.isEmpty());
         if (!rozwiazanie) {
@@ -124,8 +111,8 @@ public class Explorer {
     }
 
     public void BFS(Node firstNode, char[] nodeOrder) throws InterruptedException {
-        depth = 0;
-        childrenList = new ArrayList<Node>();
+        int depth = 0;
+        List<Node> childrenList;
         searchedNode = new ArrayList<Node>();
         Queue<Node> queueNode = new LinkedList<>();
         queueNode.add(firstNode);
@@ -170,9 +157,9 @@ public class Explorer {
         }
     }
 
-    public void BFSWithHeuristic(Node firstNode, IHeuristic heuristic) throws InterruptedException {
-        depth = 0;
-        childrenList = new ArrayList<Node>();
+    public void BFSH(Node firstNode, IHeuristic heuristic) throws InterruptedException {
+        int depth = 0;
+        List<Node> childrenList;
         searchedNode = new ArrayList<Node>();
         Queue<Node> queueNode = new LinkedList<>();
         queueNode.add(firstNode);
@@ -191,18 +178,24 @@ public class Explorer {
             } else {
 
                 childrenList = actualNode.generateChildren();
-                int[] nodeOrder = new int[childrenList.size()];
-                int i = 0;
-                for (Node childNode : childrenList) {
-                    childNode.setOrder(heuristic.calculateOrders((childNode.getArray())));
-                    nodeOrder[i] = heuristic.calculateOrders(childNode.getArray());
-                    System.out.println("przydzielono mi kolejnosc:" + nodeOrder[i]);
-                    i += i;
-                }
-                Arrays.sort(nodeOrder);
-                for (int j = 0; j < nodeOrder.length; j++) {
+                List<Integer> nodeOrder= new ArrayList<Integer>();
+            				int i=0;				
+            				for (Node childNode : childrenList){
+            					childNode.setOrder(heuristic.calculateOrders((childNode.getArray())));
+            					nodeOrder.add(childNode.getOrder());
+            					System.out.println("przydzielono mi kolejnosc:"+nodeOrder.get(i));
+            					i++;
+            				}
+            				
+            				Collections.sort(nodeOrder);
+            				Collections.reverse(nodeOrder);
+            				System.out.println("kolejnosc po sortowaniu");
+            			    for (int x: nodeOrder)
+            				System.out.println(x);
+            			    
+            	for (int j = nodeOrder.size() - 1; j >= 0; j--) {
                     for (Node childNode : childrenList) {
-                        if (childNode.getOrder() == nodeOrder[j]) {
+                        if (childNode.getOrder() == nodeOrder.get(j)) {
                             System.out.println("stworzylem wezel ale nie wiem czy nalezy" + childNode.getOrder());
                             childNode.printArray();
                             if (!searchedNode.contains(childNode)) {
@@ -220,7 +213,194 @@ public class Explorer {
             System.out.println("nie znalazlem rozwiazania");
         }
     }
+    
+    public void DFSH(Node firstNode, IHeuristic heuristic) throws InterruptedException {
+        List<Node> childrenList;
+        searchedNode = new ArrayList<Node>();
+        Stack<Node> stackNode = new Stack<Node>();
+        stackNode.push(firstNode);
+        Node resultNode = new Node(resultArray);
+        boolean result = false;
+        boolean randomShuffling = false;
 
+        do {
+            Node actualNode = stackNode.pop();
+            if (!searchedNode.contains(actualNode))
+                searchedNode.add(actualNode);
+            if (actualNode.equals(resultNode)) {
+                result = true;
+                System.out.println("Znaleziono po: " + searchedNode.size() + " wezlach/wezlow");
+                getPath(actualNode);
+                break;
+            } else {
+                childrenList = actualNode.generateChildren();
+				
+                List<Integer> nodeOrder= new ArrayList<Integer>();
+				int i=0;				
+				for (Node childNode : childrenList){
+					childNode.setOrder(heuristic.calculateOrders((childNode.getArray())));
+					nodeOrder.add(childNode.getOrder());
+					System.out.println("przydzielono mi kolejnosc:"+nodeOrder.get(i));
+					i++;
+				}
+				
+				Collections.sort(nodeOrder);
+				System.out.println("kolejnosc po sortowaniu");
+			    for (int x: nodeOrder)
+				System.out.println(x);
+			    
+                for (int j = nodeOrder.size() - 1; j >= 0; j--) {
+                    for (Node childNode : childrenList) {
+                        if (childNode.getOrder() == nodeOrder.get(j)) {
+                            System.out.println("stworzylem wezel ale nie wiem czy nalezy" + childNode.getDirection());
+                            childNode.printArray();
+                            if (!searchedNode.contains(childNode)) {
+                                stackNode.push(childNode);
+                            }
+                        }
+                    }
+                }
+            }
+            
+//            -iloœæ odwiedzonych stanów,
+//            -iloœæ stanów przetworzonych (dodanych do kolejki itp.),
+//
+//            wiesz
+//
+//            czasem doda duzo
+//            Piotrek Skrocki
+//            5/6, 2:24pm
+//            Piotrek Skrocki
+//
+//            przetworzone czyli ile jest na liœcie
+//            Kamil Zaharan
+//            5/6, 2:24pm
+//            Kamil Zaharan
+//
+//            ale nie przeszuka wszystkich
+//
+//            bo wczesniej znajdzie
+//            Piotrek Skrocki
+//            5/6, 2:25pm
+//            Piotrek Skrocki
+//
+//            no tak
+//            Kamil Zaharan
+//            5/6, 2:25pm
+//            Kamil Zaharan
+//
+//            np dfs stworzy w chuj
+//
+//            i trzeba masz queue
+//
+//            i dodajesz
+//
+//            tzn stack
+//
+//            chuj
+//            Piotrek Skrocki
+//            5/6, 2:25pm
+//            Piotrek Skrocki
+//
+//            czyli na koncu dlugosc stacka/kolejki to bedzie odwiedzone
+//            Kamil Zaharan
+//            5/6, 2:25pm
+//            Kamil Zaharan
+//
+//            wiesz co tam grin emoticon
+//            Piotrek Skrocki
+//            5/6, 2:25pm
+//            Piotrek Skrocki
+//
+//            ^
+//
+//            ?
+//            Kamil Zaharan
+//            5/6, 2:25pm
+//            Kamil Zaharan
+//
+//            searched to otwiedzone
+//
+//            odwiedzone
+//            Piotrek Skrocki
+//            5/6, 2:26pm
+//            Piotrek Skrocki
+//
+//            a przetworzone?
+//            Kamil Zaharan
+//            5/6, 2:26pm
+//            Kamil Zaharan
+//
+//            to trzeba stworzyc sume
+//            Piotrek Skrocki
+//            5/6, 2:26pm
+//            Piotrek Skrocki
+//
+//            to dodane do kolejki stacka
+//            Kamil Zaharan
+//            5/6, 2:26pm
+//            Kamil Zaharan
+//
+//            jeszcze jedna iteracje czy cos takiego
+//
+//            w queue mozesz dodac bardzo duzo zanim znajdziesz dobry
+//            Piotrek Skrocki
+//            5/6, 2:26pm
+//            Piotrek Skrocki
+//
+//            spoko
+//            Kamil Zaharan
+//            5/6, 2:26pm
+//            Kamil Zaharan
+//
+//            to jest queue + searched
+//            Piotrek Skrocki
+//            5/6, 2:27pm
+//            Piotrek Skrocki
+//
+//            no nie do konca bo z queue tez usuwasz i w ogole
+//
+//            ogolnie to wszystkie dodane do queue
+//
+//            czyli za kazdym razem jak dodaje
+//
+//            to inkrementuje
+//            Kamil Zaharan
+//            5/6, 2:27pm
+//            Kamil Zaharan
+//
+//            ale co usuniesz z queue to idzie do searched
+//
+//            tongue emoticon
+//
+//            nie?
+//
+//            aa jeszcze czesc sie dubluje
+//            Piotrek Skrocki
+//            5/6, 2:27pm
+//            Piotrek Skrocki
+//
+//            w sumie masz racje
+//
+//            no
+//            Kamil Zaharan
+//            5/6, 2:28pm
+//            Kamil Zaharan
+//
+//            takze to tez trzeba wziac pod uwage tongue emoticon
+//
+//            ty masz racje
+//
+//            TY@!
+            //Thread.sleep(100);
+        }
+        while (!stackNode.isEmpty());
+        if (!result) {
+            System.out.println("nie znalazlem rozwiazania");
+        }
+    }
+   
+    
     public char[] shuffleNodeOrder() {
         char[] nodeOrder = nodesDirections;
         Random rnd = ThreadLocalRandom.current();
@@ -262,7 +442,6 @@ public class Explorer {
                     break;
                 }
             }
-            System.out.println(resultPath);
         }
         try {
             Serializer.saveFile(convertResultPath(resultPath));
@@ -270,6 +449,7 @@ public class Explorer {
             e.printStackTrace();
         }
         System.out.println("Droga jaka pokonalem aby zwyciezyc: " + convertResultPath(resultPath));
+        System.out.println("Dlugosc rozwiazania: "+convertResultPath(resultPath).length()+" ruchy");
     }
 
 }
